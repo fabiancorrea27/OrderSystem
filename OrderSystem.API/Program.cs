@@ -1,7 +1,9 @@
 using System.Linq;
+using System.Net;
 using System.Text;
 using BCrypt.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -76,6 +78,29 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.ContentType = "application/json";
+
+        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        var exception = exceptionHandlerPathFeature?.Error;
+
+        var problemDetails = new
+        {
+            type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+            title = "An error occurred while processing your request.",
+            status = (int)HttpStatusCode.InternalServerError,
+            detail = exception?.Message,
+            instance = context.Request.Path
+        };
+
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        await context.Response.WriteAsJsonAsync(problemDetails);
+    });
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
