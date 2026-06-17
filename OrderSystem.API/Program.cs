@@ -102,9 +102,9 @@ using (var scope = app.Services.CreateScope())
     if (!dbContext.Products.Any())
     {
         dbContext.Products.AddRange(
-            new Product("Laptop Gamer", 1499.99m),
-            new Product("Auriculares Bluetooth", 129.50m),
-            new Product("Teclado mecánico", 89.90m)
+            new Product("Laptop Gamer", 1499.99m, 20),
+            new Product("Auriculares Bluetooth", 129.50m, 15),
+            new Product("Teclado mecánico", 89.90m, 8)
         );
     }
 

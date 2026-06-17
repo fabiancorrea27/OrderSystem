@@ -10,4 +10,7 @@ public class CreateProductDto
 
     [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que cero.")]
     public decimal Price { get; set; }
+
+    [Range(0, int.MaxValue, ErrorMessage = "El stock debe ser 0 o mayor.")]
+    public int Stock { get; set; }
 }

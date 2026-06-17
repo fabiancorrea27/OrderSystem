@@ -20,7 +20,8 @@ public class GetProductsUseCase
         {
             Id = p.Id,
             Name = p.Name,
-            Price = p.Price
+            Price = p.Price,
+            Stock = p.Stock
         }).ToList();
     }
 }

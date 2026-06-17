@@ -21,6 +21,7 @@ public class AppDbContext : DbContext
             entity.HasKey(p => p.Id);
             entity.Property(p => p.Name).IsRequired().HasMaxLength(200);
             entity.Property(p => p.Price).IsRequired().HasColumnType("decimal(18,2)");
+            entity.Property(p => p.Stock).IsRequired();
         });
 
         modelBuilder.Entity<Order>(entity =>

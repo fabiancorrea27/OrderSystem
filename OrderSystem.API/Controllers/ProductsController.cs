@@ -11,13 +11,16 @@ public class ProductsController : ControllerBase
 {
     private readonly GetProductsUseCase _getProductsUseCase;
     private readonly CreateProductUseCase _createProductUseCase;
+    private readonly UpdateProductStockUseCase _updateProductStockUseCase;
 
     public ProductsController(
         GetProductsUseCase getProductsUseCase,
-        CreateProductUseCase createProductUseCase)
+        CreateProductUseCase createProductUseCase,
+        UpdateProductStockUseCase updateProductStockUseCase)
     {
         _getProductsUseCase = getProductsUseCase;
         _createProductUseCase = createProductUseCase;
+        _updateProductStockUseCase = updateProductStockUseCase;
     }
 
     [HttpGet]
@@ -34,5 +37,24 @@ public class ProductsController : ControllerBase
     {
         var result = await _createProductUseCase.Execute(dto);
         return CreatedAtAction(nameof(GetAll), new { id = result.Id }, result);
+    }
+
+    [HttpPut("{id}/stock")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateStock(Guid id, [FromBody] UpdateProductStockDto dto)
+    {
+        try
+        {
+            var result = await _updateProductStockUseCase.Execute(id, dto);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }

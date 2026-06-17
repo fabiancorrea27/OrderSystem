@@ -15,14 +15,15 @@ public class CreateProductUseCase
 
     public async Task<ProductResponseDto> Execute(CreateProductDto dto)
     {
-        var product = new Product(dto.Name, dto.Price);
+        var product = new Product(dto.Name, dto.Price, dto.Stock);
         await _repository.Add(product);
 
         return new ProductResponseDto
         {
             Id = product.Id,
             Name = product.Name,
-            Price = product.Price
+            Price = product.Price,
+            Stock = product.Stock
         };
     }
 }

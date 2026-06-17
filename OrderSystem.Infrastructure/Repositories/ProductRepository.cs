@@ -29,4 +29,10 @@ public class ProductRepository : IProductRepository
     {
         return await _context.Products.FindAsync(id);
     }
+
+    public async Task Update(Product product)
+    {
+        _context.Products.Update(product);
+        await _context.SaveChangesAsync();
+    }
 }

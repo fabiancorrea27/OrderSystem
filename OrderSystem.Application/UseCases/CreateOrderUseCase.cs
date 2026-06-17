@@ -26,6 +26,11 @@ public class CreateOrderUseCase
             if (product is null)
                 throw new KeyNotFoundException($"Product with id {item.ProductId} not found.");
 
+            if (item.Quantity > product.Stock)
+                throw new InvalidOperationException($"No hay suficiente stock de '{product.Name}'. Stock disponible: {product.Stock}.");
+
+            product.DecreaseStock(item.Quantity);
+            await _productRepository.Update(product);
             order.AddItem(product.Id, item.Quantity, product.Price);
         }
 
