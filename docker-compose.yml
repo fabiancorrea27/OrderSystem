@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ordersystem-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ordersdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: fabian123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ordersystem-api
+    restart: unless-stopped
+    ports:
+      - "5108:5108"
+      #- "7024:7024"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:5108
+      ConnectionStrings__DefaultConnection: Host=db;Database=ordersdb;Username=postgres;Password=fabian123
+      Jwt__Key: TuClaveSecretaSuperSeguraDeAlMenos32Caracteres!
+      Jwt__Issuer: OrderSystem
+      Jwt__Audience: OrderSystemClient
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
