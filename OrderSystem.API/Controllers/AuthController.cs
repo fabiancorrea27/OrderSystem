@@ -1,5 +1,7 @@
 namespace OrderSystem.API.Controllers;
 
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrderSystem.Application.DTOs;
 using OrderSystem.Application.UseCases;
@@ -10,11 +12,16 @@ public class AuthController : ControllerBase
 {
     private readonly RegisterUserUseCase _registerUseCase;
     private readonly LoginUseCase _loginUseCase;
+    private readonly GetProfileUseCase _getProfileUseCase;
 
-    public AuthController(RegisterUserUseCase registerUseCase, LoginUseCase loginUseCase)
+    public AuthController(
+        RegisterUserUseCase registerUseCase,
+        LoginUseCase loginUseCase,
+        GetProfileUseCase getProfileUseCase)
     {
         _registerUseCase = registerUseCase;
         _loginUseCase = loginUseCase;
+        _getProfileUseCase = getProfileUseCase;
     }
 
     [HttpPost("register")]
@@ -39,5 +46,20 @@ public class AuthController : ControllerBase
             return Unauthorized(new { error = "Invalid email or password." });
 
         return Ok(new { token });
+    }
+
+    [HttpGet("profile")]
+    [Authorize]
+    public async Task<IActionResult> GetProfile()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+            return Unauthorized();
+
+        var profile = await _getProfileUseCase.Execute(userId);
+        if (profile is null)
+            return NotFound(new { error = "User not found." });
+
+        return Ok(profile);
     }
 }
