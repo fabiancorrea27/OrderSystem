@@ -49,6 +49,15 @@ public class AppDbContext : DbContext
             entity.HasIndex(u => u.Email).IsUnique();
             entity.Property(u => u.PasswordHash).IsRequired();
             entity.Property(u => u.Role).IsRequired().HasDefaultValue("Client");
+            entity.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
+            entity.Property(u => u.LastName).IsRequired().HasMaxLength(100);
+            entity.OwnsOne(u => u.Address, a =>
+            {
+                a.Property(p => p.Street).HasColumnName("Address").HasMaxLength(250);
+                a.Property(p => p.City).HasColumnName("City").HasMaxLength(100);
+                a.Property(p => p.Department).HasColumnName("Department").HasMaxLength(100);
+            });
+            entity.Property(u => u.Phone).HasMaxLength(20);
         });
     }
 }
