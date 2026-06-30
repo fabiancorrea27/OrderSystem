@@ -3,6 +3,7 @@ namespace OrderSystem.Application.UseCases;
 using OrderSystem.Application.DTOs;
 using OrderSystem.Domain.Entities;
 using OrderSystem.Domain.Interfaces;
+using OrderSystem.Domain.ValueObjects;
 
 public class RegisterUserUseCase
 {
@@ -26,7 +27,13 @@ public class RegisterUserUseCase
             Id = Guid.NewGuid(),
             Email = dto.Email,
             PasswordHash = hash,
-            Role = "Client"
+            Role = "Client",
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            Address = dto.Address is not null
+                ? new Address(dto.Address.Street, dto.Address.City, dto.Address.Department)
+                : null,
+            Phone = dto.Phone
         };
 
         await _repository.Add(user);
