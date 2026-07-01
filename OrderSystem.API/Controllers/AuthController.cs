@@ -13,15 +13,18 @@ public class AuthController : ControllerBase
     private readonly RegisterUserUseCase _registerUseCase;
     private readonly LoginUseCase _loginUseCase;
     private readonly GetProfileUseCase _getProfileUseCase;
+    private readonly UpdateProfileUseCase _updateProfileUseCase;
 
     public AuthController(
         RegisterUserUseCase registerUseCase,
         LoginUseCase loginUseCase,
-        GetProfileUseCase getProfileUseCase)
+        GetProfileUseCase getProfileUseCase,
+        UpdateProfileUseCase updateProfileUseCase)
     {
         _registerUseCase = registerUseCase;
         _loginUseCase = loginUseCase;
         _getProfileUseCase = getProfileUseCase;
+        _updateProfileUseCase = updateProfileUseCase;
     }
 
     [HttpPost("register")]
@@ -61,5 +64,28 @@ public class AuthController : ControllerBase
             return NotFound(new { error = "User not found." });
 
         return Ok(profile);
+    }
+
+    [HttpPut("profile")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+            return Unauthorized();
+
+        try
+        {
+            var profile = await _updateProfileUseCase.Execute(userId, dto);
+            return Ok(profile);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { error = ex.Message });
+        }
     }
 }

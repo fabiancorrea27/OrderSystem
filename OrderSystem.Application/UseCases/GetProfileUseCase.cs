@@ -24,9 +24,14 @@ public class GetProfileUseCase
             Role = user.Role,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Address = user.Address?.Street,
-            City = user.Address?.City,
-            Department = user.Address?.Department,
+            Address = user.Address is not null
+                ? new AddressDto
+                {
+                    Street = user.Address.Street,
+                    City = user.Address.City,
+                    Department = user.Address.Department
+                }
+                : null,
             Phone = user.Phone
         };
     }

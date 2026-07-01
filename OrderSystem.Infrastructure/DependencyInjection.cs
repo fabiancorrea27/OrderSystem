@@ -36,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<CreateOrderUseCase>();
         services.AddScoped<GetMyOrdersUseCase>();
         services.AddScoped<GetProfileUseCase>();
+        services.AddScoped<UpdateProfileUseCase>();
 
         return services;
     }
