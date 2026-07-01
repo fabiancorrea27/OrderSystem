@@ -32,6 +32,7 @@ public static class DependencyInjection
         services.AddScoped<RegisterUserUseCase>();
         services.AddScoped<LoginUseCase>();
         services.AddScoped<CreateProductUseCase>();
+        services.AddScoped<UpdateProductPriceUseCase>();
         services.AddScoped<GetProductsUseCase>();
         services.AddScoped<UpdateProductStockUseCase>();
         services.AddScoped<CreateOrderUseCase>();
