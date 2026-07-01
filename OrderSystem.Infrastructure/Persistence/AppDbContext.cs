@@ -9,6 +9,8 @@ public class AppDbContext : DbContext
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Cart> Carts => Set<Cart>();
+    public DbSet<CartItem> CartItems => Set<CartItem>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -40,6 +42,24 @@ public class AppDbContext : DbContext
             entity.HasKey(oi => oi.Id);
             entity.Property(oi => oi.Quantity).IsRequired();
             entity.Property(oi => oi.Price).IsRequired().HasColumnType("decimal(18,2)");
+        });
+
+        modelBuilder.Entity<Cart>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.UserId).IsRequired();
+            entity.HasIndex(c => c.UserId).IsUnique();
+            entity.HasMany(c => c.Items)
+                  .WithOne()
+                  .HasForeignKey(ci => ci.CartId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(ci => ci.Id);
+            entity.Property(ci => ci.Quantity).IsRequired();
+            entity.Property(ci => ci.Price).IsRequired().HasColumnType("decimal(18,2)");
         });
 
         modelBuilder.Entity<User>(entity =>

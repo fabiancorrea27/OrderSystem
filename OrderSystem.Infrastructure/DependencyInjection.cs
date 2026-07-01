@@ -23,7 +23,8 @@ public static class DependencyInjection
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
-
+        services.AddScoped<ICartRepository, CartRepository>();
+ 
         // Services (Adapters)
         services.AddScoped<IJwtService, JwtService>();
 
@@ -37,7 +38,14 @@ public static class DependencyInjection
         services.AddScoped<GetMyOrdersUseCase>();
         services.AddScoped<GetProfileUseCase>();
         services.AddScoped<UpdateProfileUseCase>();
-
+        services.AddScoped<GetCartUseCase>();
+        services.AddScoped<AddCartItemUseCase>();
+        services.AddScoped<UpdateCartItemQtyUseCase>();
+        services.AddScoped<RemoveCartItemUseCase>();
+        services.AddScoped<ClearCartUseCase>();
+        services.AddScoped<MergeCartUseCase>();
+        services.AddScoped<UpdateCartItemPriceUseCase>();
+ 
         return services;
     }
 }
