@@ -102,9 +102,26 @@ using (var scope = app.Services.CreateScope())
     if (!dbContext.Products.Any())
     {
         dbContext.Products.AddRange(
-            new Product("Laptop Gamer", 1499.99m, 20),
-            new Product("Auriculares Bluetooth", 129.50m, 15),
-            new Product("Teclado mecánico", 89.90m, 8)
+            new Product("Laptop Gamer", 3499000m, 20),
+            new Product("Auriculares Bluetooth", 289000m, 15),
+            new Product("Teclado mecánico", 189000m, 8),
+            new Product("Mouse inalámbrico", 89000m, 30),
+            new Product("Monitor 27 pulgadas", 699000m, 12),
+            new Product("Webcam HD", 149000m, 18),
+            new Product("Silla ergonómica", 549000m, 10),
+            new Product("Impresora láser", 429000m, 7),
+            new Product("SSD 1TB", 249000m, 25),
+            new Product("Memoria RAM 16GB", 189000m, 22),
+            new Product("Router Wi-Fi 6", 329000m, 14),
+            new Product("Cargador USB-C", 69000m, 40),
+            new Product("Smartwatch", 399000m, 16),
+            new Product("Tablet Android", 549000m, 11),
+            new Product("Consola portátil", 899000m, 9),
+            new Product("Altavoces Bluetooth", 199000m, 20),
+            new Product("Cámara de seguridad", 279000m, 13),
+            new Product("Módem 5G", 389000m, 8),
+            new Product("Proyector LED", 729000m, 6),
+            new Product("Micrófono USB", 139000m, 17)
         );
     }
 
