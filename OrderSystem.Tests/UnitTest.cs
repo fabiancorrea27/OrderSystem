@@ -3,6 +3,7 @@ using OrderSystem.Application.DTOs;
 using OrderSystem.Application.UseCases;
 using OrderSystem.Domain.Entities;
 using OrderSystem.Domain.Interfaces;
+using OrderSystem.Domain.ValueObjects;
 
 namespace OrderSystem.Tests;
 
@@ -41,7 +42,7 @@ public class UnitTest
         // Arrange
         var requestedProductId = Guid.NewGuid();
         var userId = Guid.NewGuid();
-        var product = new Product("Test Product", 10.50m);
+        var product = new Product("Test Product", 10.50m, 10);
 
         var productRepositoryMock = new Mock<IProductRepository>();
         productRepositoryMock
@@ -76,6 +77,32 @@ public class UnitTest
 
         orderRepositoryMock.Verify(x => x.Add(It.IsAny<Order>()), Times.Once);
         productRepositoryMock.Verify(x => x.GetById(requestedProductId), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetMyOrdersUseCase_WhenOrderHasShippingAddress_ReturnsItInResponse()
+    {
+        // Arrange
+        var orderRepositoryMock = new Mock<IOrderRepository>();
+        var order = new Order(Guid.NewGuid());
+        order.AddItem(Guid.NewGuid(), quantity: 1, price: 10.00m);
+        order.SetShippingAddress(new Address("Calle 123", "Bogotá", "Cundinamarca"));
+
+        orderRepositoryMock
+            .Setup(x => x.GetByUserId(It.IsAny<Guid>()))
+            .ReturnsAsync(new List<Order> { order });
+
+        var useCase = new GetMyOrdersUseCase(orderRepositoryMock.Object);
+
+        // Act
+        var response = await useCase.Execute(Guid.NewGuid());
+
+        // Assert
+        Assert.Single(response);
+        Assert.NotNull(response[0].ShippingAddress);
+        Assert.Equal("Calle 123", response[0].ShippingAddress!.Street);
+        Assert.Equal("Bogotá", response[0].ShippingAddress.City);
+        Assert.Equal("Cundinamarca", response[0].ShippingAddress.Department);
     }
 
     [Fact]
