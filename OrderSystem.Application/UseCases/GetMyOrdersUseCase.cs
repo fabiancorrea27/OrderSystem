@@ -28,7 +28,15 @@ public class GetMyOrdersUseCase
                 Quantity = i.Quantity,
                 Price = i.Price,
                 Subtotal = i.GetTotalPrice()
-            }).ToList()
+            }).ToList(),
+            ShippingAddress = order.ShippingAddress is not null
+                ? new AddressDto
+                {
+                    Street = order.ShippingAddress.Street,
+                    City = order.ShippingAddress.City,
+                    Department = order.ShippingAddress.Department
+                }
+                : null
         }).ToList();
     }
 }

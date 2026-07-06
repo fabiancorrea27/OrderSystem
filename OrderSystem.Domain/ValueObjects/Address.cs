@@ -2,9 +2,9 @@ namespace OrderSystem.Domain.ValueObjects;
 
 public class Address
 {
-    public string? Street { get; }
-    public string? City { get; }
-    public string? Department { get; }
+    public string? Street { get; set; }
+    public string? City { get; set; }
+    public string? Department { get; set; }
 
     private Address() { }
 

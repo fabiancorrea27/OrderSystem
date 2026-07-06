@@ -7,6 +7,6 @@ public class UserProfileDto
     public string Role { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public AddressDto? Address { get; set; }
+    public List<AddressDto> Addresses { get; set; } = new();
     public string? Phone { get; set; }
 }

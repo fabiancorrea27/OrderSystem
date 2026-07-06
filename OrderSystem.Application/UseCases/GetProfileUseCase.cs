@@ -24,14 +24,15 @@ public class GetProfileUseCase
             Role = user.Role,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Address = user.Address is not null
-                ? new AddressDto
+            Addresses = user.SavedAddresses
+                .Where(a => a.HasValue)
+                .Select(a => new AddressDto
                 {
-                    Street = user.Address.Street,
-                    City = user.Address.City,
-                    Department = user.Address.Department
-                }
-                : null,
+                    Street = a.Street,
+                    City = a.City,
+                    Department = a.Department
+                })
+                .ToList(),
             Phone = user.Phone
         };
     }

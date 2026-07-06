@@ -7,6 +7,7 @@ public class OrderResponseDto
     public DateTime CreatedAt { get; set; }
     public List<OrderItemResponseDto> Items { get; set; } = new();
     public decimal Total { get; set; }
+    public AddressDto? ShippingAddress { get; set; }
 }
 
 public class OrderItemResponseDto

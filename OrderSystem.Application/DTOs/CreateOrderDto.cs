@@ -7,6 +7,8 @@ public class CreateOrderDto
     [Required(ErrorMessage = "La orden debe contener al menos un artículo.")]
     [MinLength(1, ErrorMessage = "La orden debe contener al menos un artículo.")]
     public List<CreateOrderItemDto> Items { get; set; } = new();
+
+    public AddressDto? ShippingAddress { get; set; }
 }
 
 public class CreateOrderItemDto

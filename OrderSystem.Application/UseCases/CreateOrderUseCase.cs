@@ -3,6 +3,7 @@ namespace OrderSystem.Application.UseCases;
 using OrderSystem.Application.DTOs;
 using OrderSystem.Domain.Entities;
 using OrderSystem.Domain.Interfaces;
+using OrderSystem.Domain.ValueObjects;
 
 public class CreateOrderUseCase
 {
@@ -18,6 +19,10 @@ public class CreateOrderUseCase
     public async Task<OrderResponseDto> Execute(CreateOrderDto dto, Guid userId)
     {
         var order = new Order(userId);
+        var shippingAddress = dto.ShippingAddress is not null
+            ? new Address(dto.ShippingAddress.Street, dto.ShippingAddress.City, dto.ShippingAddress.Department)
+            : null;
+        order.SetShippingAddress(shippingAddress);
 
         foreach (var item in dto.Items)
         {
@@ -42,6 +47,14 @@ public class CreateOrderUseCase
             UserId = order.UserId,
             CreatedAt = order.CreatedAt,
             Total = order.CalculateTotal(),
+            ShippingAddress = order.ShippingAddress is not null
+                ? new AddressDto
+                {
+                    Street = order.ShippingAddress.Street,
+                    City = order.ShippingAddress.City,
+                    Department = order.ShippingAddress.Department
+                }
+                : null,
             Items = order.Items.Select(i => new OrderItemResponseDto
             {
                 ProductId = i.ProductId,

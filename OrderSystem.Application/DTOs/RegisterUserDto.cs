@@ -20,7 +20,7 @@ public class RegisterUserDto
     [StringLength(100, ErrorMessage = "El apellido no puede tener más de 100 caracteres.")]
     public string LastName { get; set; } = string.Empty;
 
-    public AddressDto? Address { get; set; }
+    public List<AddressDto>? Addresses { get; set; }
 
     [Phone(ErrorMessage = "El teléfono no tiene un formato válido.")]
     [StringLength(20, ErrorMessage = "El teléfono no puede tener más de 20 caracteres.")]

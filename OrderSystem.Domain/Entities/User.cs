@@ -10,6 +10,6 @@ public class User
     public string Role { get; set; } = "Client";
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public Address? Address { get; set; }
+    public List<Address> SavedAddresses { get; set; } = new();
     public string? Phone { get; set; }
 }

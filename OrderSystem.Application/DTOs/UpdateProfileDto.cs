@@ -16,7 +16,7 @@ public class UpdateProfileDto
     [EmailAddress(ErrorMessage = "El correo electrónico no tiene un formato válido.")]
     public string Email { get; set; } = string.Empty;
 
-    public AddressDto? Address { get; set; }
+    public List<AddressDto>? Addresses { get; set; }
 
     [Phone(ErrorMessage = "El teléfono no tiene un formato válido.")]
     [StringLength(20, ErrorMessage = "El teléfono no puede tener más de 20 caracteres.")]

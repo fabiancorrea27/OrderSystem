@@ -31,9 +31,11 @@ public class UpdateProfileUseCase
         user.LastName = dto.LastName;
         user.Email = dto.Email;
         user.Phone = dto.Phone;
-        user.Address = dto.Address is not null
-            ? new Address(dto.Address.Street, dto.Address.City, dto.Address.Department)
-            : null;
+
+        user.SavedAddresses = (dto.Addresses ?? new List<AddressDto>())
+            .Select(a => new Address(a.Street, a.City, a.Department))
+            .Where(a => a.HasValue)
+            .ToList();
 
         await _repository.Update(user);
 
@@ -44,14 +46,15 @@ public class UpdateProfileUseCase
             Role = user.Role,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Address = user.Address is not null
-                ? new AddressDto
+            Addresses = user.SavedAddresses
+                .Where(a => a.HasValue)
+                .Select(a => new AddressDto
                 {
-                    Street = user.Address.Street,
-                    City = user.Address.City,
-                    Department = user.Address.Department
-                }
-                : null,
+                    Street = a.Street,
+                    City = a.City,
+                    Department = a.Department
+                })
+                .ToList(),
             Phone = user.Phone
         };
     }

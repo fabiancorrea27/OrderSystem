@@ -22,6 +22,11 @@ public class RegisterUserUseCase
 
         var hash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
+        var savedAddresses = (dto.Addresses ?? new List<AddressDto>())
+            .Select(a => new Address(a.Street, a.City, a.Department))
+            .Where(a => a.HasValue)
+            .ToList();
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -30,9 +35,7 @@ public class RegisterUserUseCase
             Role = "Client",
             FirstName = dto.FirstName,
             LastName = dto.LastName,
-            Address = dto.Address is not null
-                ? new Address(dto.Address.Street, dto.Address.City, dto.Address.Department)
-                : null,
+            SavedAddresses = savedAddresses,
             Phone = dto.Phone
         };
 

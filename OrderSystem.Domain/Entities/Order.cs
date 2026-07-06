@@ -1,3 +1,5 @@
+using OrderSystem.Domain.ValueObjects;
+
 namespace OrderSystem.Domain.Entities;
 
 public class Order
@@ -6,6 +8,7 @@ public class Order
     public Guid UserId { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public List<OrderItem> Items { get; private set; } = new();
+    public Address? ShippingAddress { get; private set; }
 
     private Order() { }
 
@@ -25,6 +28,11 @@ public class Order
             throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
 
         Items.Add(new OrderItem(productId, quantity, price));
+    }
+
+    public void SetShippingAddress(Address? shippingAddress)
+    {
+        ShippingAddress = shippingAddress;
     }
 
     public decimal CalculateTotal() => Items.Sum(i => i.GetTotalPrice());
