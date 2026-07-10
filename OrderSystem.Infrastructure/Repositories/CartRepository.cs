@@ -17,6 +17,7 @@ public class CartRepository : ICartRepository
     public async Task<Cart?> GetByUserId(Guid userId)
     {
         return await _context.Carts
+            .AsNoTracking()
             .Include(c => c.Items)
             .FirstOrDefaultAsync(c => c.UserId == userId);
     }
@@ -24,34 +25,29 @@ public class CartRepository : ICartRepository
     public async Task Save(Cart cart)
     {
         var existing = await _context.Carts
+            .AsNoTracking()
             .FirstOrDefaultAsync(c => c.UserId == cart.UserId);
 
         if (existing is null)
         {
-            await _context.Carts.AddAsync(cart);
-        }
-        else
-        {
-            cart.SetId(existing.Id);
-
-            foreach (var item in cart.Items)
-                item.SetCartId(existing.Id);
-
-            await using var tx = await _context.Database.BeginTransactionAsync();
-
-            await _context.CartItems
-                .Where(ci => ci.CartId == existing.Id)
-                .ExecuteDeleteAsync();
-
-            // Detach tracked items so EF doesn't try to update deleted rows
-            foreach (var entry in _context.ChangeTracker.Entries<CartItem>().ToList())
-                entry.State = EntityState.Detached;
-
-            foreach (var item in cart.Items)
-                _context.Entry(item).State = EntityState.Added;
-
+            _context.Carts.Add(cart);
             await _context.SaveChangesAsync();
-            await tx.CommitAsync();
+            return;
         }
+
+        cart.SetId(existing.Id);
+
+        await _context.CartItems
+            .Where(ci => ci.CartId == existing.Id)
+            .ExecuteDeleteAsync();
+
+        foreach (var item in cart.Items)
+        {
+            var fresh = new CartItem(item.ProductId, item.Quantity, item.Price);
+            fresh.SetCartId(existing.Id);
+            _context.CartItems.Add(fresh);
+        }
+
+        await _context.SaveChangesAsync();
     }
 }
